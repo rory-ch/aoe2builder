@@ -43,7 +43,7 @@ export default function App() {
 			<View style={styles.container}>
 				<Header />
 				<Time time={time} setTime={setTime} />
-				<Res resources={{woodCount, foodCount, goldCount, stoneCount}} gatherers={{woodGatherers, foodGatherers, goldGatherers, stoneGatherers}}/>
+				<Res resources={{woodCount, foodCount, goldCount, stoneCount}} />
 				<View style={styles.display}>
 					<Buildings />
 					<Units />
