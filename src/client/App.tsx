@@ -11,7 +11,6 @@ import Techs from './components/Techs.jsx';
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#2d2d2d',
 	},
 	display: {
 		flex: 7,
