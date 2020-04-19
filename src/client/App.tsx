@@ -15,8 +15,9 @@ const styles = StyleSheet.create({
 	},
 	display: {
 		flex: 7,
+		flexDirection: 'row',
 		backgroundColor: 'dimgray',
-	}
+	},
 });
 
 export default function App() {
