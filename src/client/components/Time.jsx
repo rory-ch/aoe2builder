@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Slider, Text, View } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -12,15 +12,22 @@ const styles = StyleSheet.create({
     width: 500,
     maxWidth: '90%',
   },
+  header: {
+    color: 'seashell',
+    fontWeight: 'bold',
+  },
 });
 
-const Time = () => {
-  const [time, setTime] = useState(0);
+const Time = ({ time, setTime }) => {
   const maxTime = 1000;
   return (
     <View style={styles.container}>
-      <Text>Game Time: {time}</Text>
-      <Slider style={styles.slider} minimumValue={0} maximum Value={maxTime} onValueChange={(value) => { setTime(parseInt(value * maxTime, 10)); }} />
+      <Text style={styles.header}>Game Time: {time}</Text>
+      <Slider
+        style={styles.slider}
+        maximumValue={maxTime}
+        onValueChange={(value) => { setTime(parseInt(value * maxTime, 10)); }}
+      />
     </View>
   );
 };
