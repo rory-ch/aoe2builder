@@ -1,3 +1,4 @@
+/* eslint-disable */
 const GETbuildingsBuildingIdUnits = [
   { buildingid: 13, name: 'Archer', wood: 25, food: 0, gold: 45, stone: 0, creationtime: 35, description: 'Archer|Ranged unit. Strong vs. units at long range. Weak vs. Skirmishers and units at close range. Upgrades: attack, range, armor (Blacksmith); attack, accuracy (University); accuracy, to Crossbowman 125F, 75G (Archery Range); creation speed (Castle); more resistant to Monks (Monastery).', unitid: 1, building: 13 },
   { buildingid: 13, name: 'Hand Cannoneer', wood: 0, food: 45, gold: 50, stone: 0, creationtime: 34, description: 'Hand Cannoneer|Gunpowder unit with powerful attack, but inaccurate at long range. Strong vs. infantry. Weak vs. Elite Skirmishers and archers. Upgrades: armor (Blacksmith); creation speed (Castle); more resistant to Monks (Monastery).', unitid: 2, building: 13 },
