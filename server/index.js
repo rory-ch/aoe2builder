@@ -1,15 +1,26 @@
 const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
-const { getBuildings, getGatherRates, postBuild } = require('./database/model.js');
+const { getBuildingUnits, getBuildingTechs, getGatherRates, postBuild } = require('./db.model.js');
 
 const app = express();
 const port = process.env.PORT || 3000;
 app.use(bodyParser());
 
-// GET /buildings
-app.get('/buildings', (req, res) => {
-  getBuildings((err, results) => {
+// GET /buildings/:buildingId/units
+app.get('/buildings/:buildingId/units', (req, res) => {
+  getBuildingUnits(req.params.buildingId, (err, results) => {
+    if (err) {
+      console.error(err);
+      res.status(400).send();
+    } else {
+      res.status(200).send(results);
+    }
+  });
+});
+
+// GET /buildings/:buildingId/techs
+app.get('/buildings/:buildingId/techs', (req, res) => {
+  getBuildingTechs(req.params.buildingId, (err, results) => {
     if (err) {
       console.error(err);
       res.status(400).send();
