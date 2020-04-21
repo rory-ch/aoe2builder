@@ -6,7 +6,7 @@ const Nav = () => (
     placement="center"
     backgroundColor="#5e5e5e"
     leftComponent={{ icon: 'menu', color: '#fff' }}
-    centerComponent={{ text: 'BUILDR', style: { color: '#fff' } }}
+    centerComponent={{ text: 'BUILDR', style: { color: '#fff', fontWeight: 'bold' } }}
     rightComponent={{ icon: 'home', color: '#fff' }}
   />
 );
