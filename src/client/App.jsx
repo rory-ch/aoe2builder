@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/jsx-filename-extension */
-import React, { useState, useMemo, useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Nav from './components/Nav.jsx';
 import Time from './components/Time.jsx';
 import Res from './components/Res.jsx';
@@ -21,39 +21,72 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function App() {
-  const [time, setTime] = useState(0);
-  // RESOURCES: GATHER RATE
-  const [woodRate, setWoodRate] = useState(0);
-  const [foodRate, setFoodRate] = useState(0);
-  const [goldRate, setGoldRate] = useState(0);
-  const [stoneRate, setStoneRate] = useState(0);
-  // RESOURCES: TOTALS
-  const [woodCount, setWoodCount] = useState(200);
-  const [foodCount, setFoodCount] = useState(200);
-  const [goldCount, setGoldCount] = useState(50);
-  const [stoneCount, setStoneCount] = useState(200);
-  // RESOURCES: GATHERERS
-  const [woodGatherers, setWoodGatherers] = useState(0);
-  const [foodGatherers, setFoodGatherers] = useState(0);
-  const [goldGatherers, setGoldGatherers] = useState(0);
-  const [stoneGatherers, setStoneGatherers] = useState(0);
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      time: 0,
+      // RATES
+      woodRate: 0,
+      foodRate: 0,
+      goldRate: 0,
+      stoneRate: 0,
+      // RESOURCE STARTING TOTALS
+      woodCount: 200,
+      foodCount: 200,
+      goldCount: 50,
+      stoneCount: 200,
+      // RESOURCE GATHERERS
+      woodGatherers: 0,
+      foodGatherers: 0,
+      goldGatherers: 0,
+      stoneGatherers: 0,
+      // BUILDINGS/UNITS?TECHS IN BUILD
+      buildings: [],
+      units: [],
+      techs: [],
+      // ALL BUILDINGS/UNITS/TECHS FOR REFERENCE
+      allBuildings: {},
+      allUnits: {},
+      allTechs: {},
+      // APP INITIALIZING STATE
+      initializing: true,
+    };
+    // BIND ALL FUNCTIONS
+    this.getAllBuildings = this.getAllBuildings.bind(this);
+    this.addBuilding = this.addBuilding.bind(this);
+    this.getUnit = this.getUnit.bind(this);
+    this.setState = this.setState.bind(this);
+  }
 
-  // SET BUILT BUILDINGS, UNITS, TECHS
-  const [buildings, setBuildings] = useState([]);
-  const [units, setUnits] = useState([]);
-  const [techs, setTechs] = useState([]);
+  componentDidMount() {
+    // GET START UNITS ON LOAD
+    const { getAllBuildings, addBuilding, getUnit, addUnit, setState } = this;
+    const { time, allBuildings } = this.state;
 
-  // App state
-  const [initializing, setInitializing] = useState(true);
+    getAllBuildings(() => {
+      addBuilding(allBuildings['Town Center'], time);
 
-  // Tracks the data
-  const [allBuildings, setAllBuildings] = useState({});
-  const [allUnits, setAllUnits] = useState({});
-  const [allTechs, setAllTechs] = useState({});
+      getUnit(24, (villager) => {
+        addUnit(villager, time);
+        addUnit(villager, time);
+        addUnit(villager, time);
+      });
 
-  // API CALLS
-  const getAllBuildings = (callback) => {
+      getUnit(48, (scout) => {
+        addUnit(scout, time);
+        setState((state) => ({ ...state, initializing: !state.initializing }));
+      });
+    });
+  }
+
+  /*
+    * API CALLS
+  */
+
+  getAllBuildings = (callback) => {
+    const { allBuildings } = this.state;
+    const { setState } = this;
     fetch('http://98.234.28.109:5040/buildings')
       .then((response) => response.json())
       .then((results) => {
@@ -68,7 +101,8 @@ export default function App() {
                 .then((response) => response.json())
                 .then((techs) => {
                   building.techs = techs;
-                  setAllBuildings({ ...allBuildings, [building.name]: building });
+                  allBuildings[`${building.name}`] = building;
+                  setState((state) => ({ ...state, allBuildings }));
                   count += 1;
                   if (count === totalBuildings) {
                     callback();
@@ -82,70 +116,59 @@ export default function App() {
       .catch((err) => { console.error(err); });
   };
 
-  const getBuilding = (buildingId, callback) => {
-    fetch(`http://98.234.28.109:5040/buildings/${buildingId}`)
-      .then((response) => response.json())
-      .then((result) => { setAllBuildings({ ...allBuildings, [result.name]: result }); return result; })
-      .then((result) => { callback(result); })
-      .catch((err) => { console.error(err); });
-  };
-
-  const getUnit = (unitId, callback) => {
+  getUnit = (unitId, callback) => {
+    const { allUnits } = this.state;
+    const { setState } = this;
     fetch(`http://98.234.28.109:5040/units/${unitId}`)
       .then((response) => response.json())
-      .then((result) => { setAllUnits({ ...allBuildings, [result.name]: result }); return result; })
-      .then((result) => { callback(result); })
+      .then((result) => {
+        const newUnit = result[0];
+        allUnits[`${newUnit.name}`] = newUnit;
+        setState((state) => ({ ...state, allUnits }));
+        return newUnit;
+      })
+      .then((newUnit) => { callback(newUnit); })
       .catch((err) => { console.error(err); });
   };
 
   // FUNCTIONS TO ADD BUILDINGS TO BUILD SET
-  const addBuilding = (building, currentTime) => {
+  addBuilding = (building, currentTime) => {
+    const { initializing, buildings } = this.state;
     const buildingWithNewProps = Object.create(building);
     buildingWithNewProps.buildStart = initializing ? currentTime + building.buildTime : building.buildTime;
     buildingWithNewProps.status = initializing ? 'idle' : 'construction';
-    setBuildings([...buildings, buildingWithNewProps]);
+    buildings.push(buildingWithNewProps);
+    this.setState((state) => ({ ...state, buildings }));
   };
 
-  const addUnit = (unit, currentTime) => {
+  addUnit = (unit, currentTime) => {
+    const { initializing, units, allBuildings } = this.state;
     const unitWithNewProps = Object.create(unit);
     unitWithNewProps.buildStart = initializing ? currentTime + unit.buildTime : unit.buildTime;
     unitWithNewProps.status = initializing ? 'idle' : 'construction';
     unitWithNewProps.tasks = unit.unitid === 24 ? allBuildings : [];
-    setUnits([...units, unitWithNewProps]);
+    units.push(unitWithNewProps);
+    this.setState((state) => ({ ...state, units }));
   };
 
-  // GET START UNITS ON LOAD
-  useMemo(() => {
-    getAllBuildings(() => {
-      getBuilding(8, (result) => {
-        addBuilding(result, time);
-      });
-
-      getUnit(24, (villager) => {
-        addUnit(villager, time);
-        addUnit(villager, time);
-        addUnit(villager, time);
-      });
-
-      getUnit(48, (scout) => {
-        addUnit(scout, time);
-        setInitializing(false);
-      });
-    });
-  }, []);
-
-  return (
-    <ErrorBoundary>
-      <View style={styles.container}>
-        <Nav />
-        <Time time={time} setTime={setTime} />
-        <Res resources={{ woodCount, foodCount, goldCount, stoneCount }} />
-        <View style={styles.display}>
-          <Buildings buildings={buildings} setTechs={setTechs} addUnit={addUnit} />
-          <Units units={units} setUnits={setUnits} />
-          <Techs techs={techs} />
+  render() {
+    const { time, woodCount, foodCount, goldCount, stoneCount, buildings, units, techs } = this.state;
+    const { setState, addUnit } = this;
+    return (
+      <ErrorBoundary>
+        <View style={styles.container}>
+          <Nav />
+          <Time time={time} setState={setState} />
+          <Res resources={{ woodCount, foodCount, goldCount, stoneCount }} />
+          <View style={styles.display}>
+            <Buildings setState={setState} buildings={buildings} addUnit={addUnit} />
+            <Units setState={setState} units={units} />
+            <Techs techs={techs} />
+          </View>
         </View>
-      </View>
-    </ErrorBoundary>
-  );
+      </ErrorBoundary>
+    );
+  }
 }
+
+export default App;
