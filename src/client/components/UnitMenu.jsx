@@ -4,8 +4,9 @@ import { ListItem, Card, Divider } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   menu: {
-    position: 'relative',
-    left: 100,
+    // position: 'relative',
+    // left: 100,
+    margin: 'auto',
     padding: 0,
     width: 200,
     height: 400,
@@ -19,21 +20,31 @@ const styles = StyleSheet.create({
   },
 });
 
-const Menu = ({ tasks }) => {
+const Task = (type, start, finish) => {
+  this.type = type;
+  this.start = start;
+  this.finish = finish;
+};
+
+const UnitMenu = ({ tasks, addBuilding, time }) => {
   const { menu, header, avatar } = styles;
   return (
     <Card containerStyle={menu}>
       {
-        tasks.map((task, i) => {
-          return (
-            <View key={i} style={header}>
-              <ListItem leftAvatar={{ source: { uri: task.image }, style: avatar }} title={task.name} onPress={() => { }} />
-            </View>
-          );
-        })
+        Object.keys(tasks).map((key, i) => (
+          <View key={i} style={header}>
+            <ListItem
+              leftAvatar={{ source: { uri: tasks[key].image }, style: avatar }}
+              title={tasks[key].name}
+              onPress={() => {
+                addBuilding(tasks[key], time);
+              }}
+            />
+          </View>
+        ))
       }
     </Card>
   );
 };
 
-export default Menu;
+export default UnitMenu;
