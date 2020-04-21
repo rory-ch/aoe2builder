@@ -47,13 +47,12 @@ class App extends Component {
       techs: [],
       // ALL BUILDINGS/UNITS/TECHS FOR REFERENCE
       allBuildings: {},
-      allUnits: {},
-      allTechs: {},
       // APP INITIALIZING STATE
       initializing: true,
     };
     // BIND ALL FUNCTIONS
     this.getAllBuildings = this.getAllBuildings.bind(this);
+    this.getBuilding = this.getBuilding.bind(this);
     this.addBuilding = this.addBuilding.bind(this);
     this.getUnit = this.getUnit.bind(this);
     this.setState = this.setState.bind(this);
@@ -61,22 +60,25 @@ class App extends Component {
 
   componentDidMount() {
     // GET START UNITS ON LOAD
-    const { getAllBuildings, addBuilding, getUnit, addUnit, setState } = this;
-    const { time, allBuildings } = this.state;
+    const { getAllBuildings, addBuilding, getBuilding, getUnit, addUnit, setState } = this;
+
+    getBuilding(8, (townCenter) => {
+      addBuilding(townCenter, 0);
+    });
+
+    getUnit(24, (villager) => {
+      addUnit(villager, 0);
+      addUnit(villager, 0);
+      addUnit(villager, 0);
+    });
+
+    getUnit(48, (scout) => {
+      addUnit(scout, 0);
+      setState((state) => ({ ...state, initializing: !state.initializing }));
+    });
 
     getAllBuildings(() => {
-      addBuilding(allBuildings['Town Center'], time);
-
-      getUnit(24, (villager) => {
-        addUnit(villager, time);
-        addUnit(villager, time);
-        addUnit(villager, time);
-      });
-
-      getUnit(48, (scout) => {
-        addUnit(scout, time);
-        setState((state) => ({ ...state, initializing: !state.initializing }));
-      });
+      return;
     });
   }
 
@@ -116,18 +118,21 @@ class App extends Component {
       .catch((err) => { console.error(err); });
   };
 
+  getBuilding = (buildingId, callback) => {
+    fetch(`http://98.234.28.109:5040/buildings/${buildingId}`)
+      .then((response) => response.json())
+      .then((result) => {
+        callback(result);
+      })
+      .catch((err) => { console.error(err); });
+  };
+
   getUnit = (unitId, callback) => {
-    const { allUnits } = this.state;
-    const { setState } = this;
     fetch(`http://98.234.28.109:5040/units/${unitId}`)
       .then((response) => response.json())
       .then((result) => {
-        const newUnit = result[0];
-        allUnits[`${newUnit.name}`] = newUnit;
-        setState((state) => ({ ...state, allUnits }));
-        return newUnit;
+        callback(result[0]);
       })
-      .then((newUnit) => { callback(newUnit); })
       .catch((err) => { console.error(err); });
   };
 
@@ -142,18 +147,18 @@ class App extends Component {
   };
 
   addUnit = (unit, currentTime) => {
-    const { initializing, units, allBuildings } = this.state;
+    const { initializing, units } = this.state;
     const unitWithNewProps = Object.create(unit);
     unitWithNewProps.buildStart = initializing ? currentTime + unit.buildTime : unit.buildTime;
     unitWithNewProps.status = initializing ? 'idle' : 'construction';
-    unitWithNewProps.tasks = unit.unitid === 24 ? allBuildings : [];
     units.push(unitWithNewProps);
     this.setState((state) => ({ ...state, units }));
   };
 
   render() {
-    const { time, woodCount, foodCount, goldCount, stoneCount, buildings, units, techs } = this.state;
+    const { time, allBuildings, woodCount, foodCount, goldCount, stoneCount, buildings, units, techs } = this.state;
     const { setState, addUnit } = this;
+
     return (
       <ErrorBoundary>
         <View style={styles.container}>
@@ -162,7 +167,7 @@ class App extends Component {
           <Res resources={{ woodCount, foodCount, goldCount, stoneCount }} />
           <View style={styles.display}>
             <Buildings setState={setState} buildings={buildings} addUnit={addUnit} />
-            <Units setState={setState} units={units} />
+            <Units setState={setState} units={units} allBuildings={allBuildings} />
             <Techs techs={techs} />
           </View>
         </View>
