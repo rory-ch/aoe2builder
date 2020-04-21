@@ -1,20 +1,24 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import Unit from './Unit.jsx';
 
 const styles = StyleSheet.create({
-  header: {
+  display: {
     flex: 1,
-    backgroundColor: 'blanchedalmond',
+    backgroundColor: '#121413',
     justifyContent: 'center',
     alignItems: 'center',
+    borderRightColor: '#383838',
+    borderRightWidth: 1,
   },
 });
 
-const Units = () => {
+const Units = ({ units }) => {
+  const { display } = styles;
 
   return (
-    <View style={styles.header}>
-      <Text>Units</Text>
+    <View style={display}>
+      {units.map((unit, i) => <Unit key={i} unit={unit} />)}
     </View>
   );
 };
