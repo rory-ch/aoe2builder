@@ -98,11 +98,11 @@ class App extends Component {
           fetch(`http://98.234.28.109:5040/buildings/${building.buildingid}/units`)
             .then((response) => response.json())
             .then((units) => {
-              building.units = units;
+              building.units = units[0].name === null ? [] : units;
               fetch(`http://98.234.28.109:5040/buildings/${building.buildingid}/techs`)
                 .then((response) => response.json())
                 .then((techs) => {
-                  building.techs = techs;
+                  building.techs = techs[0].name === null ? [] : techs;
                   allBuildings[`${building.name}`] = building;
                   setState((state) => ({ ...state, allBuildings }));
                   count += 1;
@@ -139,19 +139,17 @@ class App extends Component {
   // FUNCTIONS TO ADD BUILDINGS TO BUILD SET
   addBuilding = (building, currentTime) => {
     const { initializing, buildings } = this.state;
-    const buildingWithNewProps = Object.create(building);
-    buildingWithNewProps.buildStart = initializing ? currentTime + building.buildTime : building.buildTime;
-    buildingWithNewProps.status = initializing ? 'idle' : 'construction';
-    buildings.push(buildingWithNewProps);
+    building.buildStart = initializing ? currentTime + building.buildTime : building.buildTime;
+    building.status = initializing ? 'idle' : 'construction';
+    buildings.push(building);
     this.setState((state) => ({ ...state, buildings }));
   };
 
   addUnit = (unit, currentTime) => {
     const { initializing, units } = this.state;
-    const unitWithNewProps = Object.create(unit);
-    unitWithNewProps.buildStart = initializing ? currentTime + unit.buildTime : unit.buildTime;
-    unitWithNewProps.status = initializing ? 'idle' : 'construction';
-    units.push(unitWithNewProps);
+    unit.buildStart = initializing ? currentTime + unit.buildTime : unit.buildTime;
+    unit.status = initializing ? 'idle' : 'construction';
+    units.push(unit);
     this.setState((state) => ({ ...state, units }));
   };
 
