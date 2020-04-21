@@ -28,8 +28,13 @@
         "object-curly-newline": "off",
         "react/jsx-one-expression-per-line": "off",
         "react/prop-types": "off",
+        "react/no-array-index-key": "off",
         "no-console": "off",
         "array-callback-return": "off",
-        "import/prefer-default-export": "off"
+        "import/prefer-default-export": "off",
+        "no-tabs": "off",
+        "no-shadow": "off",
+        "max-len": "off",
+        "import/extensions": "off"
     }
 }
