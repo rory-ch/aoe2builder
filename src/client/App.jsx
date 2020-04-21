@@ -53,10 +53,12 @@ export default function App() {
   const [allTechs, setAllTechs] = useState({});
 
   // API CALLS
-  const getAllBuildings = () => {
+  const getAllBuildings = (callback) => {
     fetch('http://98.234.28.109:5040/buildings')
       .then((response) => response.json())
       .then((results) => {
+        const totalBuildings = results.length; // count records to execut callback at proper time
+        let count = 0;
         results.forEach((building) => {
           fetch(`http://98.234.28.109:5040/buildings/${building.buildingid}/units`)
             .then((response) => response.json())
@@ -67,6 +69,10 @@ export default function App() {
                 .then((techs) => {
                   building.techs = techs;
                   setAllBuildings({ ...allBuildings, [building.name]: building });
+                  count += 1;
+                  if (count === totalBuildings) {
+                    callback();
+                  }
                 })
                 .catch((err) => { console.error(err); });
             })
@@ -104,26 +110,28 @@ export default function App() {
     const unitWithNewProps = Object.create(unit);
     unitWithNewProps.buildStart = initializing ? currentTime + unit.buildTime : unit.buildTime;
     unitWithNewProps.status = initializing ? 'idle' : 'construction';
+    unitWithNewProps.tasks = unit.unitid === 24 ? allBuildings : [];
     setUnits([...units, unitWithNewProps]);
   };
 
   // GET START UNITS ON LOAD
   useMemo(() => {
-    getBuilding(8, (result) => {
-      addBuilding(result, time);
-    });
+    getAllBuildings(() => {
+      getBuilding(8, (result) => {
+        addBuilding(result, time);
+      });
 
-    getUnit(24, (villager) => {
-      addUnit(villager, time);
-      addUnit(villager, time);
-      addUnit(villager, time);
-    });
+      getUnit(24, (villager) => {
+        addUnit(villager, time);
+        addUnit(villager, time);
+        addUnit(villager, time);
+      });
 
-    getUnit(48, (scout) => {
-      addUnit(scout, time);
+      getUnit(48, (scout) => {
+        addUnit(scout, time);
+        setInitializing(false);
+      });
     });
-
-    getAllBuildings();
   }, []);
 
   return (
