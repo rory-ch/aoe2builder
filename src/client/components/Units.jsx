@@ -6,7 +6,6 @@ const styles = StyleSheet.create({
   display: {
     flex: 1,
     backgroundColor: '#121413',
-    justifyContent: 'center',
     alignItems: 'center',
     borderRightColor: '#383838',
     borderRightWidth: 1,
