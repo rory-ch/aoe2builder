@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 3,
+    marginBottom: 4,
   },
   tooltip: {
     backgroundColor: 'rgba(0, 0, 0, 0)',
