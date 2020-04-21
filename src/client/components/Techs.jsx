@@ -1,25 +1,23 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import Tech from './Tech.jsx';
 
 const styles = StyleSheet.create({
   display: {
     flex: 1,
     backgroundColor: '#121413',
-    justifyContent: 'center',
     alignItems: 'center',
-  },
-  header: {
-    color: 'seashell',
+    borderRightColor: '#383838',
+    borderRightWidth: 1,
   },
 });
 
-
-const Techs = () => {
-  const { display, header } = styles;
+const Techs = ({ techs, time }) => {
+  const { display } = styles;
 
   return (
     <View style={display}>
-      <Text style={header}>Techs</Text>
+      {techs.map((tech, i) => <Tech key={i} tech={tech} time={time} />)}
     </View>
   );
 };
