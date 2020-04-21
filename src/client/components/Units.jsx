@@ -12,12 +12,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const Units = ({ units }) => {
+const Units = ({ units, allBuildings }) => {
   const { display } = styles;
 
   return (
     <View style={display}>
-      {units.map((unit, i) => <Unit key={i} unit={unit} />)}
+      {units.map((unit, i) => <Unit key={i} unit={unit} tasks={unit.unitid === 24 ? allBuildings : []} />)}
     </View>
   );
 };
