@@ -12,12 +12,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const Units = ({ units, allBuildings }) => {
+const Units = ({ units, allBuildings, time, addBuilding }) => {
   const { display } = styles;
-
   return (
     <View style={display}>
-      {units.map((unit, i) => <Unit key={i} unit={unit} tasks={unit.unitid === 24 ? allBuildings : []} />)}
+      {units.map((unit, i) => <Unit key={i} unit={unit} time={time} addBuilding={addBuilding} tasks={unit.unitid === 24 ? allBuildings : []} />)}
     </View>
   );
 };
