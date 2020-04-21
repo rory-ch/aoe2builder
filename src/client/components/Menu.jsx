@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Menu = ({ units, techs, addUnit }) => {
+const Menu = ({ units, techs, addUnit, addTech, time }) => {
   const { menu, header, avatar } = styles;
   return (
     <Card containerStyle={menu}>
@@ -27,7 +27,7 @@ const Menu = ({ units, techs, addUnit }) => {
         units.map((unit, i) => {
           return (
             <View key={i} style={header}>
-              <ListItem leftAvatar={{ source: { uri: unit.image }, style: avatar }} title={unit.name} onPress={() => { addUnit(unit); }} />
+              <ListItem leftAvatar={{ source: { uri: unit.image }, style: avatar }} title={unit.name} onPress={() => { addUnit(unit, time); }} />
             </View>
           );
         })
@@ -37,7 +37,7 @@ const Menu = ({ units, techs, addUnit }) => {
         techs.map((tech, i) => {
           return (
             <View key={i} style={header}>
-              <ListItem leftAvatar={{ source: { uri: tech.image }, style: avatar }} title={tech.name} />
+              <ListItem leftAvatar={{ source: { uri: tech.image }, style: avatar }} title={tech.name} onPress={() => { addTech(tech, time); }} />
             </View>
           );
         })
