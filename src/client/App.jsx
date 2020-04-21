@@ -74,11 +74,10 @@ class App extends Component {
 
     getUnit(48, (scout) => {
       addUnit(scout, 0);
-      setState((state) => ({ ...state, initializing: !state.initializing }));
     });
 
     getAllBuildings(() => {
-      return;
+      setState((state) => ({ ...state, initializing: !state.initializing }));
     });
   }
 
@@ -138,24 +137,55 @@ class App extends Component {
 
   // FUNCTIONS TO ADD BUILDINGS TO BUILD SET
   addBuilding = (building, currentTime) => {
-    const { initializing, buildings } = this.state;
-    building.buildStart = initializing ? currentTime + building.buildTime : building.buildTime;
-    building.status = initializing ? 'idle' : 'construction';
+    const { initializing, buildings, woodCount, foodCount, goldCount, stoneCount } = this.state;
+    const { wood, food, gold, stone, creationtime } = building;
+    building.completesAt = initializing ? currentTime : currentTime + creationtime;
+    building.tasks = [];
     buildings.push(building);
-    this.setState((state) => ({ ...state, buildings }));
+    if (!initializing) {
+      if (wood > woodCount || food > foodCount || gold > goldCount || stone > stoneCount) {
+        console.log('You do not have enough resources for this tech');
+      } else {
+        this.setState((state) => ({ ...state, woodCount: woodCount - wood, foodCount: foodCount - food, goldCount: goldCount - gold, stoneCount: stoneCount - stone }));
+        this.setState((state) => ({ ...state, buildings }));
+      }
+    }
   };
 
   addUnit = (unit, currentTime) => {
-    const { initializing, units } = this.state;
-    unit.buildStart = initializing ? currentTime + unit.buildTime : unit.buildTime;
-    unit.status = initializing ? 'idle' : 'construction';
+    const { initializing, units, woodCount, foodCount, goldCount, stoneCount } = this.state;
+    const { wood, food, gold, stone, creationtime } = unit;
+    unit.completesAt = initializing ? currentTime : currentTime + creationtime;
+    unit.tasks = [];
     units.push(unit);
-    this.setState((state) => ({ ...state, units }));
+    // CHECK RESOURCES
+    if (!initializing) {
+      if (wood > woodCount || food > foodCount || gold > goldCount || stone > stoneCount) {
+        console.log('You do not have enough resources for this tech');
+      } else {
+        this.setState((state) => ({ ...state, woodCount: woodCount - wood, foodCount: foodCount - food, goldCount: goldCount - gold, stoneCount: stoneCount - stone }));
+        this.setState((state) => ({ ...state, units }));
+      }
+    }
+  };
+
+  addTech = (tech, currentTime) => {
+    const { techs, woodCount, foodCount, goldCount, stoneCount } = this.state;
+    const { wood, food, gold, stone, creationtime } = tech;
+    tech.completesAt = currentTime + creationtime;
+    techs.push(tech);
+    // CHECK RESOURCES
+    if (wood > woodCount || food > foodCount || gold > goldCount || stone > stoneCount) {
+      console.log('You do not have enough resources for this tech');
+    } else {
+      this.setState((state) => ({ ...state, woodCount: woodCount - wood, foodCount: foodCount - food, goldCount: goldCount - gold, stoneCount: stoneCount - stone }));
+      this.setState((state) => ({ ...state, techs }));
+    }
   };
 
   render() {
     const { time, allBuildings, woodCount, foodCount, goldCount, stoneCount, buildings, units, techs } = this.state;
-    const { setState, addUnit } = this;
+    const { setState, addUnit, addBuilding, addTech } = this;
 
     return (
       <ErrorBoundary>
@@ -164,9 +194,9 @@ class App extends Component {
           <Time time={time} setState={setState} />
           <Res resources={{ woodCount, foodCount, goldCount, stoneCount }} />
           <View style={styles.display}>
-            <Buildings setState={setState} buildings={buildings} addUnit={addUnit} />
-            <Units setState={setState} units={units} allBuildings={allBuildings} />
-            <Techs techs={techs} />
+            <Buildings setState={setState} buildings={buildings} addUnit={addUnit} addTech={addTech} time={time} />
+            <Units setState={setState} units={units} allBuildings={allBuildings} addBuilding={addBuilding} time={time} />
+            <Techs techs={techs} time={time} />
           </View>
         </View>
       </ErrorBoundary>
