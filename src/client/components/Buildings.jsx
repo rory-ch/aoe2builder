@@ -1,20 +1,23 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import Building from './Building.jsx';
 
 const styles = StyleSheet.create({
-  header: {
+  display: {
     flex: 1,
-    backgroundColor: 'darkkhaki',
-    justifyContent: 'center',
+    backgroundColor: '#121413',
     alignItems: 'center',
+    borderRightColor: '#383838',
+    borderRightWidth: 1,
   },
 });
 
-const Buildings = () => {
+const Buildings = ({ buildings, addUnit, addTech, time }) => {
+  const { display } = styles;
 
   return (
-    <View style={styles.header}>
-      <Text>Buildings</Text>
+    <View style={display}>
+      {buildings.map((building, i) => <Building key={i} building={building} addUnit={addUnit} addTech={addTech} time={time} />)}
     </View>
   );
 };

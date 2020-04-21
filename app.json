@@ -1,9 +1,9 @@
 {
-  "name": "my-project",
-  "displayName": "my-project",
+  "name": "aoe2builder",
+  "displayName": "aoe2builder",
   "expo": {
-    "name": "my-project",
-    "slug": "my-project",
+    "name": "aoe2builder",
+    "slug": "aoe2builder",
     "version": "1.0.0",
     "platforms": [
       "ios",

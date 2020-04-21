@@ -4,7 +4,7 @@ import { StyleSheet, Slider, Text, View } from 'react-native';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'darkseagreen',
+    backgroundColor: '#121413',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -13,20 +13,21 @@ const styles = StyleSheet.create({
     maxWidth: '90%',
   },
   header: {
+    marginTop: 5,
     color: 'seashell',
     fontWeight: 'bold',
   },
 });
 
-const Time = ({ time, setTime }) => {
-  const maxTime = 1000;
+const Time = ({ time, setState }) => {
+  const maxTime = 1600; // start with 25 minutes
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Game Time: {time}</Text>
+      <Text style={styles.header}>{Math.floor(time / 60)}m {time % 60}s</Text>
       <Slider
         style={styles.slider}
         maximumValue={maxTime}
-        onValueChange={(value) => { setTime(parseInt(value * maxTime, 10)); }}
+        onValueChange={(value) => { setState({ time: parseInt(value, 10) }); }}
       />
     </View>
   );
