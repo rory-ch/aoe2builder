@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 });
 
 const Time = ({ time, setState }) => {
-  const maxTime = 1600; // start with 25 minutes
+  const maxTime = 500; // start with 25 minutes
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{Math.floor(time / 60)}m {time % 60}s</Text>
