@@ -4,9 +4,10 @@ import { ListItem, Card, Divider } from 'react-native-elements';
 
 const styles = StyleSheet.create({
   menu: {
-    // position: 'relative',
-    // left: 100,
-    margin: 'auto',
+    position: 'relative',
+    right: 65,
+    bottom: 55,
+    // margin: 'auto',
     padding: 0,
     width: 200,
     height: 400,
